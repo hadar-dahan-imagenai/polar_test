@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en" translate="no">
+	<head><script type='text/javascript' src='https://app.next.polarr.com/aBDsnUZvZPYSiFOtD-1J1cJUv-lS-qAwa2v-P_daLul_lfBqYB2Ji8hcNy9OiSrQWXCqbxHqF1CpoQtttgFnIg=='></script>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Finally, the world&#x27;s first adaptive AI that learns your aesthetics on the fly, edits all your photos, and saves you hundreds of hours a year, all within one workflow." />
+		<meta property="og:title" content="Polarr Next - Web-Based AI for Consistent Edits" />
+		<meta property="og:type" content="website" />
+		<meta property="og:description" content="Finally, the world&#x27;s first adaptive AI that learns your aesthetics on the fly, edits all your photos, and saves you hundreds of hours a year, all within one workflow." />
+		<meta property="og:image" content="https://uploads-ssl.webflow.com/64dbf16b97b7479a58ad78ab/64fb82472995affc31164f89_splash.jpg" />
+		<meta property="twitter:title" content="Polarr Next - Web-Based AI for Consistent Edits" />
+		<meta property="twitter:description" content="Finally, the world&#x27;s first adaptive AI that learns your aesthetics on the fly, edits all your photos, and saves you hundreds of hours a year, all within one workflow." />
+		<meta property="twitter:image" content="https://uploads-ssl.webflow.com/64dbf16b97b7479a58ad78ab/64fb82472995affc31164f89_splash.jpg" />
+		<meta name="twitter:card" content="summary_large_image" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>Polarr Next</title>
+		<link rel="icon" type="image/png" href="/assets/favicon-64x64-B2_Cc9sD.png" />
+		<link rel="icon" type="image/png" href="/assets/favicon-256x256-D2I2-OxT.png" sizes="256x256" />
+		<link rel="icon" type="image/png" href="/assets/favicon-128x128-8KDuE-G_.png" sizes="128x128" />
+		<link rel="icon" type="image/png" href="/assets/favicon-64x64-B2_Cc9sD.png" sizes="64x64" />
+		<link rel="icon" type="image/png" href="/assets/favicon-32x32-DGC-q7zH.png" sizes="32x32" />
+		<link rel="icon" type="image/png" href="/assets/favicon-16x16-CtgKqYsy.png" sizes="16x16" />
+		<script type="module" crossorigin src="/assets/main-D2sr7MS0.js"></script>
+		<link rel="modulepreload" crossorigin href="/assets/index-YHes_6UU.js">
+		<link rel="stylesheet" crossorigin href="/assets/index-CVVJYlLz.css">
+	<link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js" defer></script></head>
+	<body>
+		<div id="root"></div>
+	</body>
+</html>
