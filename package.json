@@ -1,0 +1,23 @@
+{
+  "name": "polar_test",
+  "version": "1.0.0",
+  "description": "in \"polar_resources\" you can find a \"snapshot\" of polarr next, wiht all original files from the website.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hadar-dahan-imagenai/polar_test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hadar-dahan-imagenai/polar_test/issues"
+  },
+  "homepage": "https://github.com/hadar-dahan-imagenai/polar_test#readme",
+  "devDependencies": {
+    "playwright": "^1.52.0"
+  }
+}
