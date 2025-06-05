@@ -57,10 +57,11 @@
 
         .slider-label {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
             font-weight: bold;
             margin-bottom: 0.25rem;
+            gap: 0.5rem;
         }
 
         .slider-controls {
@@ -101,7 +102,7 @@
         }
 
         .value-info.highlighted {
-            color: #ff0000;
+            color: #1b1ee6;
             font-weight: bold;
         }
     </style>
@@ -114,11 +115,10 @@
 <div id="editorContainer">
     <div id="sliders">
         <div class="slider-group">
-            <div class="slider-label">Exposure</div>
+            <div class="slider-label">Exposure <span id="exposureValue" class="value-info highlighted">0</span></div>
             <div class="slider-controls">
                 <span class="value-info">-5</span>
                 <input type="range" min="-5" max="5" step="0.1" id="exposureSlider" value="0">
-                <span id="exposureValue" class="value-info">0</span>
                 <span class="value-info">5</span>
                 <button onclick="resetSlider('exposure', 0)">Reset</button>
             </div>
