@@ -112,7 +112,11 @@ function attachSliderListeners(app) {
         if (slider && valueSpan) {
             slider.addEventListener('input', async () => {
                 const val = parseFloat(slider.value);
-                app.adjustments[name] = val;
+                if (name === 'exposure') {
+                    app.adjustments[name] = val;
+                } else {
+                    app.adjustments[name] = val / 100;
+                }
                 valueSpan.textContent = val;
                 status.textContent = `Updating ${name}...`;
                 await app.render({ reason: `slider-${name}` });
@@ -131,8 +135,9 @@ const fileList = document.getElementById('fileList');
       const dirHandle = await window.showDirectoryPicker(); // ← MUST be here
       fileList.innerHTML = ''; // Clear list
       state_hadar_X8.hadar_X8 = dirHandle;
-      state_hadar_X8.hadar_latest_adjustments = appInstance.adjustments;
-    console.log("appInstance.adjustments",appInstance.adjustments)
+
+      state_hadar_X8.hadar_latest_adjustments["adjustments"] = appInstance.adjustments;
+    console.log("appInstance.adjustments",state_hadar_X8.hadar_latest_adjustments)
       const fileNameWithJpg = current_file.name.replace(/\.[^/.]+$/, "") + ".jpeg";
 
    
@@ -199,7 +204,6 @@ fileInput.addEventListener('change', async () => {
             status.textContent = "Editor init failed";
             return;
         }
-        console.log("here")
         if (typeof appInstance.import === 'function') {
             const app = appInstance;
             document.getElementById('canvasContainer').appendChild(app.canvas);
@@ -229,64 +233,15 @@ fileInput.addEventListener('change', async () => {
 
             status.textContent = 'Rendering image...';
 
-     //       await app.render({  reason: "import-full-size"});
-            // await appInstance.render({  reason: "import-full-size"});
             console.log("Rendered photo object:", app.photo);
 
             status.textContent = 'Done.1';
-            const imageData = [ //t  
-                {
-                  adjustmentsDigest: "a05f9e52ce89ea8e225faa23e3090201",
-                  colorTag: null,
-                  currentTask: null,
-                  customSortingIndex: null,
-                  error: null,
-                  fileName: file.name,
-                  flag: "unflagged",
-                  historyIndex: 5,
-                  id: "258660__culling_152014__d90fa16f-b8ba-4a1d-96db-74d536e0dcd2.nef|50952953",
-                  isAnchorImage: 0,
-                  isHidden: 0,
-                  isSuggestedImage: 0,
-                  isUnsupported: 0,
-                  kind: "locked",
-                  parentId: null,
-                  presetId: null,
-                  rating: 0,
-                  status: "none",
-                  styleId: null,
-                  styleVersion: null
-                }
-              ];
-              
-            const exportSettings = { //e  
-                bitDepth: undefined,
-                colorSpace: "srgb",
-                filenameNumber: 1,
-                filenamePrefix: "Untitled_",
-                filenameType: "original",
-                ppi: 300,
-                projectId: "1156ed0e-0417-4026-9496-b9c38a1ee609",
-                quality: 0.9,
-                type: "jpg"
-              };
-              const fileMap = { //s 
-                [`${file.name}|50952953`]:
-                  `${file.name.jpg}`
-              };
-                    // Show the directory picker
-            //const x = C7e(app, exportSettings);
-            //const x = qTt(imageData, exportSettings, fileMap, undefined);
-          //  const te = Te();
-         //   const x = ZTt(imageData, state_hadar_X8.hadar_X8, te); //todo with te!
+
          state_hadar_X8.hadar_file = file; 
          state_hadar_X8.hadar_latest_adjustments = app.adjustments;
          current_file = file;
-            // const x = await ZTt(imageData, state_hadar_X8.hadar_X8, exportSettings);
-
-            
-            
-            const gl = app.gl || app.canvas?.getContext("webgl2");
+                        
+         const gl = app.gl || app.canvas?.getContext("webgl2");
 
 
 

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -90,7 +89,7 @@
 
         .value-info {
             font-size: 0.85rem;
-            color: #444;
+            color: #444444;
             display: flex;
             gap: 0.25rem;
         }
@@ -99,6 +98,11 @@
             margin-top: 0.5rem;
             font-size: 0.9rem;
             color: #666;
+        }
+
+        .value-info.highlighted {
+            color: #ff0000;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -119,48 +123,43 @@
                 <button onclick="resetSlider('exposure', 0)">Reset</button>
             </div>
 
-            <div class="slider-label">Contrast</div>
+            <div class="slider-label">Contrast <span id="contrastValue" class="value-info highlighted">0</span></div>
             <div class="slider-controls">
-                <span class="value-info">-5</span>
-                <input type="range" min="-5" max="5" step="0.1" id="contrastSlider" value="0">
-                <span id="contrastValue" class="value-info">0</span>
-                <span class="value-info">5</span>
+                <span class="value-info">-100</span>
+                <input type="range" min="-100" max="100" step="1" id="contrastSlider" value="0">
+                <span class="value-info">100</span>
                 <button onclick="resetSlider('contrast', 0)">Reset</button>
             </div>
 
-            <div class="slider-label">Highlights</div>
+            <div class="slider-label">Highlights <span id="highlightsValue" class="value-info highlighted">0</span></div>
             <div class="slider-controls">
-                <span class="value-info">-5</span>
-                <input type="range" min="-5" max="5" step="0.1" id="highlightsSlider" value="0">
-                <span id="highlightsValue" class="value-info">0</span>
-                <span class="value-info">5</span>
+                <span class="value-info">-100</span>
+                <input type="range" min="-100" max="100" step="1" id="highlightsSlider" value="0">
+                <span class="value-info">100</span>
                 <button onclick="resetSlider('highlights', 0)">Reset</button>
             </div>
 
-            <div class="slider-label">Shadows</div>
+            <div class="slider-label">Shadows <span id="shadowsValue" class="value-info highlighted">0</span></div>
             <div class="slider-controls">
-                <span class="value-info">-5</span>
-                <input type="range" min="-5" max="5" step="0.1" id="shadowsSlider" value="0">
-                <span id="shadowsValue" class="value-info">0</span>
-                <span class="value-info">5</span>
+                <span class="value-info">-100</span>
+                <input type="range" min="-100" max="100" step="1" id="shadowsSlider" value="0">
+                <span class="value-info">100</span>
                 <button onclick="resetSlider('shadows', 0)">Reset</button>
             </div>
 
-            <div class="slider-label">Whites</div>
+            <div class="slider-label">Whites <span id="whitesValue" class="value-info highlighted">0</span></div>
             <div class="slider-controls">
-                <span class="value-info">-5</span>
-                <input type="range" min="-5" max="5" step="0.1" id="whitesSlider" value="0">
-                <span id="whitesValue" class="value-info">0</span>
-                <span class="value-info">5</span>
+                <span class="value-info">-100</span>
+                <input type="range" min="-100" max="100" step="1" id="whitesSlider" value="0">
+                <span class="value-info">100</span>
                 <button onclick="resetSlider('whites', 0)">Reset</button>
             </div>
 
-            <div class="slider-label">Blacks</div>
+            <div class="slider-label">Blacks <span id="blacksValue" class="value-info highlighted">0</span></div>
             <div class="slider-controls">
-                <span class="value-info">-5</span>
-                <input type="range" min="-5" max="5" step="0.1" id="blacksSlider" value="0">
-                <span id="blacksValue" class="value-info">0</span>
-                <span class="value-info">5</span>
+                <span class="value-info">-100</span>
+                <input type="range" min="-100" max="100" step="1" id="blacksSlider" value="0">
+                <span class="value-info">100</span>
                 <button onclick="resetSlider('blacks', 0)">Reset</button>
             </div>
         </div>
@@ -170,9 +169,34 @@
         <!-- Canvas will be injected here -->
     </div>
 </div>
+<button onclick="resetAllSliders()">Reset All</button>
 <button id="pickDir">Export Image</button>
 <ul id="fileList"></ul>
 <script type="module" src="launcher.js"></script>
+<script>
+function resetAllSliders() {
+  const sliders = ['exposure', 'contrast', 'highlights', 'shadows', 'whites', 'blacks'];
+  sliders.forEach(slider => {
+    const sliderElement = document.getElementById(`${slider}Slider`);
+    const valueSpan = document.getElementById(`${slider}Value`);
+    if (sliderElement && valueSpan) {
+      sliderElement.value = 0;
+      valueSpan.textContent = 0;
+      resetSlider(slider, 0);
+    }
+  });
+}
+
+
+function resetSlider(sliderId, value) {
+  const sliderElement = document.getElementById(`${sliderId}Slider`);
+  if (sliderElement) {
+    sliderElement.value = value;
+  }
+}
+
+
+</script>
 </body>
 </html>
 
