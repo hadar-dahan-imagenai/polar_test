@@ -1,11 +1,18 @@
 import * as AppModule from './app_polar.js'; // adjust path if needed
+import ZTt from './app_polar.js';
+import Te from './app_polar.js';
+
+//import qTt from './app_polar.js';
+import { state_hadar_X8 } from './app_polar.js';
 
 const fileInput = document.getElementById('fileInput');
 const status = document.getElementById('status');
 const canvas = document.getElementById('glcanvas');
 
 let appInstance;
-
+let current_file;
+const longSide = 1250;
+const shortSide = 834;
 
 function drawRedCircle(gl, canvas) {
     // ---------- 1. minimal shader pair ----------
@@ -115,6 +122,65 @@ function attachSliderListeners(app) {
     });
 }
 
+const button = document.getElementById('pickDir');
+const fileList = document.getElementById('fileList');
+  // ✅ The picker must be triggered directly inside this handler
+  button.addEventListener('click', async () => {
+    try {
+        console.log("picking directory")
+      const dirHandle = await window.showDirectoryPicker(); // ← MUST be here
+      fileList.innerHTML = ''; // Clear list
+      state_hadar_X8.hadar_X8 = dirHandle;
+      state_hadar_X8.hadar_latest_adjustments = appInstance.adjustments;
+    console.log("appInstance.adjustments",appInstance.adjustments)
+      const fileNameWithJpg = current_file.name.replace(/\.[^/.]+$/, "") + ".jpeg";
+
+   
+    state_hadar_X8.fileSystemFileHandler = await dirHandle.getFileHandle(fileNameWithJpg, {
+        create: !0
+    });
+    const imageData = [ //t  
+        {
+          adjustmentsDigest: "a05f9e52ce89ea8e225faa23e3090201",
+          colorTag: null,
+          currentTask: null,
+          customSortingIndex: null,
+          error: null,
+          fileName: current_file.name,
+          flag: "unflagged",
+          historyIndex: 5,
+          id: "258660__culling_152014__d90fa16f-b8ba-4a1d-96db-74d536e0dcd2.nef|50952953",
+          isAnchorImage: 0,
+          isHidden: 0,
+          isSuggestedImage: 0,
+          isUnsupported: 0,
+          kind: "locked",
+          parentId: null,
+          presetId: null,
+          rating: 0,
+          status: "none",
+          styleId: null,
+          styleVersion: null
+        }
+      ];
+      
+    const exportSettings = { //e  
+        bitDepth: undefined,
+        colorSpace: "srgb",
+        filenameNumber: 1,
+        filenamePrefix: "Untitled_",
+        filenameType: "original",
+        ppi: 300,
+        projectId: "1156ed0e-0417-4026-9496-b9c38a1ee609",
+        quality: 0.9,
+        type: "jpg"
+      };
+    await ZTt(imageData, state_hadar_X8.hadar_X8, exportSettings);
+
+    } catch (err) {
+      console.error('Directory selection cancelled or failed:', err);
+    }
+  });
 fileInput.addEventListener('change', async () => {
 
     const file = fileInput.files[0];
@@ -135,136 +201,21 @@ fileInput.addEventListener('change', async () => {
         }
         console.log("here")
         if (typeof appInstance.import === 'function') {
-            console.log(" await appInstance.import(file);")
-            // const file = fileInput.files[0];
-            // const app = AppModule.A0();
             const app = appInstance;
             document.getElementById('canvasContainer').appendChild(app.canvas);
 
-        // document.body.appendChild(app.canvas);
         // give the canvas CSS size (for layout) …
         app.canvas.style.width  = '100%';
         app.canvas.style.height = '100%';   
-        app.canvas.width  = 1250;
-        app.canvas.height = 1250;     
+        app.canvas.width = longSide; //todo automatically set based on metadata??
+        app.canvas.height = shortSide;
+
+        //    const metadata = undefined; // later use real EXIF if you want
+            const metadata = await app.ioAdapters[1].rawMetadataConnection.proxy.getMetadata(file);
 
 
-            const metadata = undefined; // later use real EXIF if you want
-            const adjustments = {
-                blacks: 0,
-                calibrationBlueHue: 0,
-                calibrationBlueSat: 0,
-                calibrationGreenHue: 0,
-                calibrationGreenSat: 0,
-                calibrationRedHue: 0,
-                calibrationRedSat: 0,
-                clarity: 0,
-                colorMatchImageId: null,
-                colorMatchSkinToneOptimized: true,
-                colorMatchStrength: 1,
-                colorNoiseReduction: 0.75,
-                colorProfile: null,
-                contrast: 0,
-                correctLensChromaticAberration: true,
-                correctLensDistortion: true,
-                correctLensVignette: true,
-                crop: [0, 0, 1, 1],
-                cropRatio: [0, 0],
-                cropStraighten: 0,
-                curvesAll: [[0, 0],  [255, 255]],
-                curvesBlue: [[0, 0],  [255, 255]],
-                curvesGreen: [[0, 0],  [255, 255]],
-                curvesRed: [[0, 0],  [255, 255]],
-                defringeGreenAmount: 0,
-                defringeGreenHueRange: [0.28, 0.39],
-                defringePurpleAmount: 0,
-                defringePurpleHueRange: [0.713, 0.948],
-                dehaze: 0,
-                exposure: 0,
-                flipX: false,
-                flipY: false,
-                gradingBalance: 0,
-                gradingBlending: 0.5,
-                gradingGlobalHue: 0,
-                gradingGlobalLuminance: 0,
-                gradingGlobalSaturation: 0,
-                gradingHighlightsHue: 0,
-                gradingHighlightsLuminance: 0,
-                gradingHighlightsSaturation: 0,
-                gradingMidtonesHue: 0,
-                gradingMidtonesLuminance: 0,
-                gradingMidtonesSaturation: 0,
-                gradingShadowsHue: 0,
-                gradingShadowsLuminance: 0,
-                gradingShadowsSaturation: 0,
-                grainAmount: 0,
-                grainRoughness: 0.5,
-                grainSize: 0.25,
-                healingMasks: [],
-                highlights: 0,
-                hueAqua: 0,
-                hueBlue: 0,
-                hueGreen: 0,
-                hueMagenta: 0,
-                hueOrange: 0,
-                huePurple: 0,
-                hueRed: 0,
-                hueYellow: 0,
-                ignoreEmbeddedLensCorrection: false,
-                lensDistortion: 0,
-                lensDistortionCorrectionFactor: 1,
-                lensVignetteCorrectionFactor: 1,
-                localAdjustments: [],
-                luminanceAqua: 0,
-                luminanceBlue: 0,
-                luminanceGreen: 0,
-                luminanceMagenta: 0,
-                luminanceNoiseReduction: 0,
-                luminanceOrange: 0,
-                luminancePurple: 0,
-                luminanceRed: 0,
-                luminanceYellow: 0,
-                orientation: 0,
-                parametricDarks: 0,
-                parametricDarksStop: 0.25,
-                parametricHighlights: 0,
-                parametricLights: 0,
-                parametricLightsStop: 0.75,
-                parametricMidsStop: 0.5,
-                parametricShadows: 0,
-                perspectiveAspect: 0,
-                perspectiveHorizontal: 0,
-                perspectiveOffsetX: 0,
-                perspectiveOffsetY: 0,
-                perspectiveRotate: 0,
-                perspectiveScale: 1,
-                perspectiveVertical: 0,
-                pointColors: [],
-                saturation: 0,
-                saturationAqua: 0,
-                saturationBlue: 0,
-                saturationGreen: 0,
-                saturationMagenta: 0,
-                saturationOrange: 0,
-                saturationPurple: 0,
-                saturationRed: 0,
-                saturationYellow: 0,
-                shadows: 0,
-                sharpen: 0.4,
-                temperature: undefined,
-                texture: 0,
-                tint: undefined,
-                userLutId: undefined,
-                userLutStrength: 1,
-                userLutTitle: undefined,
-                vibrance: 0,
-                vignette: 0,
-                vignetteFeather: 0.5,
-                vignetteHighlights: 0,
-                vignetteMidpoint: 1,
-                vignetteRoundness: 0,
-                whites: 0
-            };
+            const adjustments = undefined;
+
             console.log("file",file)
 
             await app.import(file, {
@@ -283,54 +234,60 @@ fileInput.addEventListener('change', async () => {
             console.log("Rendered photo object:", app.photo);
 
             status.textContent = 'Done.1';
+            const imageData = [ //t  
+                {
+                  adjustmentsDigest: "a05f9e52ce89ea8e225faa23e3090201",
+                  colorTag: null,
+                  currentTask: null,
+                  customSortingIndex: null,
+                  error: null,
+                  fileName: file.name,
+                  flag: "unflagged",
+                  historyIndex: 5,
+                  id: "258660__culling_152014__d90fa16f-b8ba-4a1d-96db-74d536e0dcd2.nef|50952953",
+                  isAnchorImage: 0,
+                  isHidden: 0,
+                  isSuggestedImage: 0,
+                  isUnsupported: 0,
+                  kind: "locked",
+                  parentId: null,
+                  presetId: null,
+                  rating: 0,
+                  status: "none",
+                  styleId: null,
+                  styleVersion: null
+                }
+              ];
+              
+            const exportSettings = { //e  
+                bitDepth: undefined,
+                colorSpace: "srgb",
+                filenameNumber: 1,
+                filenamePrefix: "Untitled_",
+                filenameType: "original",
+                ppi: 300,
+                projectId: "1156ed0e-0417-4026-9496-b9c38a1ee609",
+                quality: 0.9,
+                type: "jpg"
+              };
+              const fileMap = { //s 
+                [`${file.name}|50952953`]:
+                  `${file.name.jpg}`
+              };
+                    // Show the directory picker
+            //const x = C7e(app, exportSettings);
+            //const x = qTt(imageData, exportSettings, fileMap, undefined);
+          //  const te = Te();
+         //   const x = ZTt(imageData, state_hadar_X8.hadar_X8, te); //todo with te!
+         state_hadar_X8.hadar_file = file; 
+         state_hadar_X8.hadar_latest_adjustments = app.adjustments;
+         current_file = file;
+            // const x = await ZTt(imageData, state_hadar_X8.hadar_X8, exportSettings);
 
+            
+            
             const gl = app.gl || app.canvas?.getContext("webgl2");
-            // drawRedCircle(gl, app.canvas);        //  <-- add this
 
-            //now draw a circle on the canvas?
-//             const texture = app.renderer.photo.texture.texture;
-//             const width = app.renderer.photo.texture.width;
-//             const height = app.renderer.photo.texture.height;
-//
-// // Check for support
-//             const ext = gl.getExtension('EXT_color_buffer_float') || gl.getExtension('WEBGL_color_buffer_float');
-//             if (!ext) {
-//                 console.error("FLOAT framebuffer not supported");
-//             }
-//
-// // Create and bind framebuffer
-//             const fb = gl.createFramebuffer();
-//             gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
-//             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
-//
-//             if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
-//                 console.error("Framebuffer not complete");
-//             }
-//
-// // Use Float32Array for RGBA16F
-//             const pixelBuffer = new Float32Array(width * height * 4);
-//             gl.readPixels(0, 0, width, height, gl.RGBA, gl.FLOAT, pixelBuffer);
-//
-// // Extract RGB
-//             const red = [], green = [], blue = [];
-//             for (let i = 0; i < pixelBuffer.length; i += 4) {
-//                 red.push(pixelBuffer[i]);
-//                 green.push(pixelBuffer[i + 1]);
-//                 blue.push(pixelBuffer[i + 2]);
-//             }
-//
-//             console.log("Red:", red);
-//             console.log("Green:", green);
-//             console.log("Blue:", blue);
-//
-// // Cleanup
-//             gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-//             //get the matrix for debug
-//             // Setup width and height of your render target (usually canvas or framebuffer)
-//
-
-
-// Now pixels contains [R, G, B, A, R, G, B, A, ...] for each pixel
 
 
         } 
@@ -340,6 +297,7 @@ fileInput.addEventListener('change', async () => {
         }
     } catch (err) {
         status.textContent = 'Error: ' + err.message;
+
         console.error(err);
     }
 });
