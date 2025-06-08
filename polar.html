@@ -115,6 +115,23 @@
 <div id="editorContainer">
     <div id="sliders">
         <div class="slider-group">
+            <div class="slider-label">Temp <span id="temperatureValue" class="value-info highlighted">0</span></div>
+            <div class="slider-controls">
+                <span class="value-info">2000</span>
+                <input type="range" min="2000" max="25000" step="100" id="temperatureSlider" value="2000">
+                <span class="value-info">25000</span>
+                <button onclick="resetSlider('temperature', 0)">Reset</button>
+            </div>
+
+            <div class="slider-label">Tint <span id="tintValue" class="value-info highlighted">0</span></div>
+            <div class="slider-controls">
+                <span class="value-info">-150</span>
+                <input type="range" min="-150" max="150" step="1" id="tintSlider" value="0">
+                <span class="value-info">150</span>
+                <button onclick="resetSlider('tint', 0)">Reset</button>
+            </div>
+            <hr>
+
             <div class="slider-label">Exposure <span id="exposureValue" class="value-info highlighted">0</span></div>
             <div class="slider-controls">
                 <span class="value-info">-5</span>
@@ -130,6 +147,7 @@
                 <span class="value-info">100</span>
                 <button onclick="resetSlider('contrast', 0)">Reset</button>
             </div>
+            <hr>
 
             <div class="slider-label">Highlights <span id="highlightsValue" class="value-info highlighted">0</span></div>
             <div class="slider-controls">
@@ -162,6 +180,48 @@
                 <span class="value-info">100</span>
                 <button onclick="resetSlider('blacks', 0)">Reset</button>
             </div>
+            <hr>
+
+            <div class="slider-label">Texture <span id="textureValue" class="value-info highlighted">0</span></div>
+            <div class="slider-controls">
+                <span class="value-info">-100</span>
+                <input type="range" min="-100" max="100" step="1" id="textureSlider" value="0">
+                <span class="value-info">100</span>
+                <button onclick="resetSlider('texture', 0)">Reset</button>
+            </div>
+
+            <div class="slider-label">Clarity <span id="clarityValue" class="value-info highlighted">0</span></div>
+            <div class="slider-controls">
+                <span class="value-info">-100</span>
+                <input type="range" min="-100" max="100" step="1" id="claritySlider" value="0">
+                <span class="value-info">100</span>
+                <button onclick="resetSlider('clarity', 0)">Reset</button>
+            </div>
+
+            <div class="slider-label">Dehaze <span id="dehazeValue" class="value-info highlighted">0</span></div>
+            <div class="slider-controls">
+                <span class="value-info">-100</span>
+                <input type="range" min="-100" max="100" step="1" id="dehazeSlider" value="0">
+                <span class="value-info">100</span>
+                <button onclick="resetSlider('dehaze', 0)">Reset</button>
+            </div>
+            <hr>
+
+            <div class="slider-label">Vibrance <span id="vibranceValue" class="value-info highlighted">0</span></div>
+            <div class="slider-controls">
+                <span class="value-info">-100</span>
+                <input type="range" min="-100" max="100" step="1" id="vibranceSlider" value="0">
+                <span class="value-info">100</span>
+                <button onclick="resetSlider('vibrance', 0)">Reset</button>
+            </div>
+
+            <div class="slider-label">Saturation <span id="saturationValue" class="value-info highlighted">0</span></div>
+            <div class="slider-controls">
+                <span class="value-info">-100</span>
+                <input type="range" min="-100" max="100" step="1" id="saturationSlider" value="0">
+                <span class="value-info">100</span>
+                <button onclick="resetSlider('saturation', 0)">Reset</button>
+            </div>
         </div>
     </div>
 
@@ -175,27 +235,25 @@
 <script type="module" src="launcher.js"></script>
 <script>
 function resetAllSliders() {
-  const sliders = ['exposure', 'contrast', 'highlights', 'shadows', 'whites', 'blacks'];
+  const sliders = ['exposure', 'contrast', 'highlights', 'shadows', 'whites', 'blacks', 'texture', 'clarity', 'dehaze', 'vibrance', 'saturation', 'temperature', 'tint'];
   sliders.forEach(slider => {
     const sliderElement = document.getElementById(`${slider}Slider`);
     const valueSpan = document.getElementById(`${slider}Value`);
     if (sliderElement && valueSpan) {
-      sliderElement.value = 0;
-      valueSpan.textContent = 0;
-      resetSlider(slider, 0);
+      window.resetSlider(slider, 0);
     }
   });
 }
 
 
-function resetSlider(sliderId, value) {
-  const sliderElement = document.getElementById(`${sliderId}Slider`);
-  if (sliderElement) {
-    sliderElement.value = value;
-  }
-}
 
+document.getElementById('temperatureSlider').addEventListener('input', function() {
+    document.getElementById('temperatureValue').textContent = this.value;
+});
 
+document.getElementById('tintSlider').addEventListener('input', function() {
+    document.getElementById('tintValue').textContent = this.value;
+});
 </script>
 </body>
 </html>

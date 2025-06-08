@@ -11,6 +11,8 @@ const canvas = document.getElementById('glcanvas');
 
 let appInstance;
 let current_file;
+let asShotTemp;
+let asShotTint;
 const longSide = 1250;
 const shortSide = 834;
 
@@ -85,18 +87,31 @@ function linkProgram(gl, vsSrc, fsSrc) {
 
 function attachSliderListeners(app) {
     const controls = [
+        { name: 'temperature', default: asShotTemp },
+        { name: 'tint', default: asShotTint },
         { name: 'exposure', default: 0 },
         { name: 'contrast', default: 0 },
         { name: 'highlights', default: 0 },
         { name: 'shadows', default: 0 },
         { name: 'whites', default: 0 },
-        { name: 'blacks', default: 0 }
+        { name: 'blacks', default: 0 },
+        { name: 'texture', default: 0 },
+        { name: 'clarity', default: 0 },
+        { name: 'dehaze', default: 0 },
+        { name: 'vibrance', default: 0 },
+        { name: 'saturation', default: 0 }
     ];
 
     window.resetSlider = async function (controlName, defaultValue) {
         const slider = document.getElementById(`${controlName}Slider`);
         const valueSpan = document.getElementById(`${controlName}Value`);
+
         if (slider) {
+            if (controlName === 'temperature') {
+                defaultValue = asShotTemp;
+            } else if (controlName === 'tint') {
+                defaultValue = asShotTint;
+            }
             slider.value = defaultValue;
             valueSpan.textContent = defaultValue;
             app.adjustments[controlName] = defaultValue;
@@ -112,7 +127,7 @@ function attachSliderListeners(app) {
         if (slider && valueSpan) {
             slider.addEventListener('input', async () => {
                 const val = parseFloat(slider.value);
-                if (name === 'exposure') {
+                if (name === 'exposure' || name === 'temperature' || name === 'tint') {
                     app.adjustments[name] = val;
                 } else {
                     app.adjustments[name] = val / 100;
@@ -144,6 +159,7 @@ const fileList = document.getElementById('fileList');
     state_hadar_X8.fileSystemFileHandler = await dirHandle.getFileHandle(fileNameWithJpg, {
         create: !0
     });
+    const id = `${current_file.name}|${current_file.lastModified}`
     const imageData = [ //t  
         {
           adjustmentsDigest: "a05f9e52ce89ea8e225faa23e3090201",
@@ -154,7 +170,7 @@ const fileList = document.getElementById('fileList');
           fileName: current_file.name,
           flag: "unflagged",
           historyIndex: 5,
-          id: "258660__culling_152014__d90fa16f-b8ba-4a1d-96db-74d536e0dcd2.nef|50952953",
+          id: id,
           isAnchorImage: 0,
           isHidden: 0,
           isSuggestedImage: 0,
@@ -194,11 +210,8 @@ fileInput.addEventListener('change', async () => {
     status.textContent = 'Loading image...';
 
     try {
-        // Assuming your app instance has an import or load method
-        // Expect A0 (getEditor) to return the full editing instance
         if (typeof AppModule.A0 === 'function') {
             appInstance = AppModule.A0();
-            // console.log("Editor instance created via A0()");
         } else {
             console.error("App module doesn't export A0()");
             status.textContent = "Editor init failed";
@@ -214,39 +227,41 @@ fileInput.addEventListener('change', async () => {
         app.canvas.width = longSide; //todo automatically set based on metadata??
         app.canvas.height = shortSide;
 
-        //    const metadata = undefined; // later use real EXIF if you want
-            const metadata = await app.ioAdapters[1].rawMetadataConnection.proxy.getMetadata(file);
+        const metadata = await app.ioAdapters[1].rawMetadataConnection.proxy.getMetadata(file);
 
+        const adjustments = undefined;
 
-            const adjustments = undefined;
+        await app.import(file, {
+            photoId: file.name,
+            metadata,
+            adjustments,
+            enableHalfResolution: false,
+            enableDenoise: true
+        });
 
-            console.log("file",file)
+        asShotTemp = Math.round(app.renderer.photo.whiteBalance.asShotTemperature);
+        asShotTint = Math.round(app.renderer.photo.whiteBalance.asShotTint);
+        
+        //update the html file temp and tint sliders with the asShotTemp and asShotTint
+        document.getElementById('temperatureSlider').value = asShotTemp;
+        document.getElementById('tintSlider').value = asShotTint;
+        document.getElementById('temperatureValue').textContent = asShotTemp;
+        document.getElementById('tintValue').textContent = asShotTint;
 
-            await app.import(file, {
-                photoId: file.name,
-                metadata,
-                adjustments,
-                enableHalfResolution: false,
-                enableDenoise: true
-            });
-            attachSliderListeners(app);
+        attachSliderListeners(app);
 
-            status.textContent = 'Rendering image...';
+        status.textContent = 'Rendering image...';
 
-            console.log("Rendered photo object:", app.photo);
+        console.log("Rendered photo object:", app.photo);
 
-            status.textContent = 'Done.1';
+        status.textContent = 'Done.1';
 
          state_hadar_X8.hadar_file = file; 
          state_hadar_X8.hadar_latest_adjustments = app.adjustments;
          current_file = file;
                         
          const gl = app.gl || app.canvas?.getContext("webgl2");
-
-
-
         } 
-
          else {
             status.textContent = 'App module does not expose import/load method.';
         }

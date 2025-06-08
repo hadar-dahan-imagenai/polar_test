@@ -46,6 +46,7 @@ async function test_reset_all(page, canvasesAfter, img_name) {
 
   // Click all reset buttons sequentially
   for (const btn of resetButtons) {
+    await page.waitForTimeout(500);
     await btn.click();
   }
 
@@ -70,6 +71,8 @@ async function test_reset_all(page, canvasesAfter, img_name) {
     throw new Error(`⚠️ ${prefix}_target_rendered.png not found, failing test.`);
   } else {
     try {
+      await page.waitForTimeout(3000); // Wait before image comparison
+
       await compareImages(resetScreenshotPath, targetRenderedPath);
       console.log('✅ Reset rendered image matches target_rendered.png!');
     } catch (err) {
@@ -83,11 +86,11 @@ async function test_edit_sliders(page, img_name) {
   // Change multiple sliders as requested
   const slidersToChange = {
     exposureSlider: 0.9,
-    contrastSlider: 0.8,
-    highlightsSlider: -0.9,
-    shadowsSlider: 1.1,
-    whitesSlider: 0.3,
-    blacksSlider: -0.5,
+    contrastSlider: 80,
+    highlightsSlider: -90,
+    shadowsSlider: 100,
+    whitesSlider: 30,
+    blacksSlider: -50,
   };
 
   for (const [sliderId, value] of Object.entries(slidersToChange)) {
@@ -203,18 +206,42 @@ async function test_render_image(page, img_name) {
 
   return canvasesAfter;
 }
+async function cleanupOldImages(page) {
+  const imagesToDelete = [
+    path.join(__dirname, 'rendered-output.png'),
+    path.join(__dirname, 'edited-output.png'),
+    path.join(__dirname, 'reset-output.png')
+  ];
+
+  imagesToDelete.forEach(imagePath => {
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
+      console.log(`Deleted old image: ${imagePath}`);
+    }
+  });
+  await page.waitForTimeout(3000);
+}
+
 
 async function test_one_image(page) {
+  //i want to delete old rendered/edited images before running the test - "./rendered_target.png" and "./edited_target.png" and "./reset_output.png"
+  await cleanupOldImages(page);
+
   const testImagesDir = path.join(__dirname, 'test_images');
-  const file_list = fs.readdirSync(testImagesDir).filter(file => file.endsWith('.cr3'));
+  const file_list = fs.readdirSync(testImagesDir).filter(file => file.endsWith('.cr2'));
 
   for (const img_name of file_list) {
     console.log("****img_name", img_name,"****")
+    await page.reload(); // Refresh the page before starting a new image test
+    await page.waitForTimeout(1000);
+
     const canvasesAfter = await test_render_image(page, path.join('test_images', img_name));
     const editedScreenshotPath = await test_edit_sliders(page, img_name);
     await test_reset_all(page, canvasesAfter, img_name);
   }
 }
+
+
 
 (async () => {
   const browser = await chromium.launch({ headless: false });
@@ -237,17 +264,30 @@ async function test_one_image(page) {
   const fileInput = await page.$('#fileInput');
   if (!fileInput) throw new Error('Missing file input');
 
-  const exposureSlider = await page.$('#exposureSlider');
-  if (!exposureSlider) throw new Error('Exposure slider not found');
+  // Check sliders
+  const sliders = [
+    { id: '#exposureSlider', min: '-5', max: '5' },
+    { id: '#contrastSlider', min: '-100', max: '100' },
+    { id: '#highlightsSlider', min: '-100', max: '100' },
+    { id: '#shadowsSlider', min: '-100', max: '100' },
+    { id: '#whitesSlider', min: '-100', max: '100' },
+    { id: '#blacksSlider', min: '-100', max: '100' }
+  ];
 
-  const exposureValue = await page.$eval('#exposureSlider', el => el.value);
-  console.log('Exposure default:', exposureValue);
-  if (exposureValue !== '0') throw new Error('Wrong default exposure value');
+  for (const slider of sliders) {
+    const sliderElement = await page.$(slider.id);
+    if (!sliderElement) throw new Error(`${slider.id} not found`);
 
-  await page.fill('#contrastSlider', '2.5');
-  const contrastValue = await page.$eval('#contrastSlider', el => el.value);
-  console.log('Contrast new value:', contrastValue);
-  if (contrastValue !== '2.5') throw new Error('Contrast slider failed to update');
+    const value = await page.$eval(slider.id, el => el.value);
+    console.log(`${slider.id} default value:`, value);
+    if (value !== '0') throw new Error(`Wrong default value for ${slider.id}`);
+
+    const min = await page.$eval(slider.id, el => el.min);
+    const max = await page.$eval(slider.id, el => el.max);
+    if (min !== slider.min || max !== slider.max) {
+      throw new Error(`Wrong min/max for ${slider.id}: expected ${slider.min}/${slider.max}, got ${min}/${max}`);
+    }
+  }
 
   console.log('✅ UI loaded and sliders are working');
 
